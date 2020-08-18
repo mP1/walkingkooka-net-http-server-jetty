@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 
 final class JettyHttpServerHandlerHttpResponse implements HttpResponse {
 
@@ -49,12 +50,22 @@ final class JettyHttpServerHandlerHttpResponse implements HttpResponse {
         this.status = status;
     }
 
+    @Override
+    public Optional<HttpStatus> status() {
+        return Optional.ofNullable(this.status);
+    }
+
     private HttpStatus status;
 
     @Override
     public void addEntity(final HttpEntity entity) {
         Objects.requireNonNull(entity, "entity");
         this.entities.add(entity);
+    }
+
+    @Override
+    public List<HttpEntity> entities() {
+        return Lists.readOnly(this.entities);
     }
 
     private final List<HttpEntity> entities = Lists.array();
