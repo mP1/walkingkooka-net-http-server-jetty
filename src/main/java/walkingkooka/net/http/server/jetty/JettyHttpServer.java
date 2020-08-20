@@ -18,9 +18,7 @@
 package walkingkooka.net.http.server.jetty;
 
 import org.eclipse.jetty.server.Server;
-import walkingkooka.Binary;
 import walkingkooka.Cast;
-import walkingkooka.collect.map.Maps;
 import walkingkooka.net.HostAddress;
 import walkingkooka.net.IpPort;
 import walkingkooka.net.UrlPath;
@@ -35,9 +33,7 @@ import walkingkooka.net.http.server.HttpServer;
 import walkingkooka.net.http.server.HttpServerException;
 
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
@@ -140,14 +136,11 @@ public final class JettyHttpServer implements HttpServer {
                         b.append('\n');
                     });
 
-
-            final byte[] bytes = b.toString().getBytes(Charset.defaultCharset());
-            final Map<HttpHeaderName<?>, Object> headers = Maps.of(
-                    HttpHeaderName.SERVER, "JettyServer",
-                    HttpHeaderName.CONTENT_TYPE, MediaType.TEXT_PLAIN.setCharset(CharsetName.UTF_8),
-                    HttpHeaderName.CONTENT_LENGTH, (long)bytes.length);
-
-            res.addEntity(HttpEntity.with(headers, Binary.with(bytes)));
+            res.addEntity(HttpEntity.EMPTY
+                    .addHeader(HttpHeaderName.SERVER, "JettyServer)")
+                    .addHeader(HttpHeaderName.CONTENT_TYPE, MediaType.TEXT_PLAIN.setCharset(CharsetName.UTF_8))
+                    .setBodyText(b.toString())
+                    .setContentLength());
 
         } else {
             res.setStatus(HttpStatusCode.NOT_FOUND.status());
