@@ -117,13 +117,14 @@ public final class JettyHttpServer implements HttpServer {
 
             req.headers()
                     .forEach((header, value) -> {
-                        b.append("  ");
-                        b.append(header);
-                        b.append(": ");
-                        b.append(header.headerText(Cast.to(value)));
-                        b.append('\n');
+                        value.forEach((v) -> {
+                            b.append("  ");
+                            b.append(header);
+                            b.append(": ");
+                            b.append(header.headerText(Cast.to(v)));
+                            b.append('\n');
+                        });
                     });
-
 
             b.append("parameters\n");
 

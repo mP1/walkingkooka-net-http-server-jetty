@@ -81,12 +81,11 @@ final class JettyHttpServerHandlerHttpResponse implements HttpResponse {
         response.setStatus(status.value().code(), status.message());
 
         boolean first = true;
-        MediaType contentType = null;
 
         try(final ServletOutputStream output = response.getOutputStream()) {
             for(HttpEntity entity : this.entities) {
                 if(first) {
-                    contentType = copyHeaders(entity, response);
+                    copyHeaders(entity, response);
                     copyBody(entity, output);
                     first = true;
                 } else {
@@ -97,22 +96,18 @@ final class JettyHttpServerHandlerHttpResponse implements HttpResponse {
         }
     }
 
-    private static MediaType copyHeaders(final HttpEntity entity, final HttpServletResponse response) {
-        MediaType contentType = null;
-
-        for(Entry<HttpHeaderName<?>, ?> headerAndValues : entity.headers().entrySet()) {
+    private static void copyHeaders(final HttpEntity entity, final HttpServletResponse response) {
+        for(final Entry<HttpHeaderName<?>, List<?>> headerAndValues : entity.headers().entrySet()) {
             final HttpHeaderName<?> headerName = headerAndValues.getKey();
-            final Object headerValue = headerAndValues.getValue();
 
-            response.addHeader(headerName.value(),
-                    headerName.headerText(Cast.to(headerValue)));
+            final String headerNameString = headerName.value();
+            final List<?> headerValues = headerAndValues.getValue();
 
-            if (HttpHeaderName.CONTENT_TYPE.equals(headerName)) {
-                contentType = (MediaType) headerName.checkValue(headerValue);
+            for(final Object headerValue : headerValues) {
+                response.addHeader(headerNameString,
+                        headerName.headerText(Cast.to(headerValue)));
             }
         }
-
-        return contentType;
     }
 
     private static void copyBody(final HttpEntity entity, final ServletOutputStream output)throws IOException {
