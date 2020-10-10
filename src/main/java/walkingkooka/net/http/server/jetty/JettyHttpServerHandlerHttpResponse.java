@@ -94,7 +94,6 @@ final class JettyHttpServerHandlerHttpResponse implements HttpResponse {
         response.setStatus(status.value().code(), status.message());
 
         boolean first = true;
-
         try(final ServletOutputStream output = response.getOutputStream()) {
             for(HttpEntity entity : this.entities) {
                 if(first) {
