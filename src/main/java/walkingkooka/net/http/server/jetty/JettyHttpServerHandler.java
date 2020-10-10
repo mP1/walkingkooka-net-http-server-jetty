@@ -50,16 +50,18 @@ final class JettyHttpServerHandler extends AbstractHandler {
                        final Request request,
                        final HttpServletRequest httpServletRequest,
                        final HttpServletResponse httpServletResponse) throws IOException, ServletException {
-        final JettyHttpServerHandlerHttpResponse httpResponse = JettyHttpServerHandlerHttpResponse.create();
+        if (false == request.isHandled()) {
+            request.setHandled(true);
 
-        final HttpRequest httpRequest = HttpRequests.httpServletRequest(httpServletRequest);
-        this.handle(httpRequest,
-                HttpResponses.headerScope(
-                                HttpResponses.multiPartAware(HttpResponses.httpStatusCodeRequiredHeaders(httpResponse))));
+            final JettyHttpServerHandlerHttpResponse httpResponse = JettyHttpServerHandlerHttpResponse.create();
 
-        httpResponse.commit(httpServletResponse);
+            final HttpRequest httpRequest = HttpRequests.httpServletRequest(httpServletRequest);
+            this.handle(httpRequest,
+                    HttpResponses.headerScope(
+                            HttpResponses.multiPartAware(HttpResponses.httpStatusCodeRequiredHeaders(httpResponse))));
 
-        request.setHandled(true);
+            httpResponse.commit(httpServletResponse);
+        }
     }
 
     private void handle(final HttpRequest request, final HttpResponse response) {
