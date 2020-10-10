@@ -20,8 +20,8 @@ package walkingkooka.net.http.server.jetty;
 import walkingkooka.Cast;
 import walkingkooka.collect.list.Lists;
 import walkingkooka.net.header.HttpHeaderName;
-import walkingkooka.net.header.MediaType;
 import walkingkooka.net.http.HttpEntity;
+import walkingkooka.net.http.HttpProtocolVersion;
 import walkingkooka.net.http.HttpStatus;
 import walkingkooka.net.http.server.HttpResponse;
 
@@ -43,6 +43,19 @@ final class JettyHttpServerHandlerHttpResponse implements HttpResponse {
     private JettyHttpServerHandlerHttpResponse() {
         super();
     }
+
+    @Override
+    public void setVersion(final HttpProtocolVersion version) {
+        Objects.requireNonNull(version, "version");
+        this.version = version;
+    }
+
+    @Override
+    public Optional<HttpProtocolVersion> version() {
+        return Optional.ofNullable(this.version);
+    }
+
+    private HttpProtocolVersion version;
 
     @Override
     public void setStatus(final HttpStatus status) {
