@@ -20,6 +20,7 @@ package walkingkooka.net.http.server.jetty;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import walkingkooka.net.http.HttpEntity;
+import walkingkooka.net.http.server.HttpHandler;
 import walkingkooka.net.http.server.HttpRequest;
 import walkingkooka.net.http.server.HttpRequests;
 import walkingkooka.net.http.server.HttpResponse;
@@ -36,11 +37,11 @@ import java.util.function.BiConsumer;
  */
 final class JettyHttpServerHandler extends AbstractHandler {
 
-    static JettyHttpServerHandler with(final BiConsumer<HttpRequest, HttpResponse> handler) {
+    static JettyHttpServerHandler with(final HttpHandler handler) {
         return new JettyHttpServerHandler(handler);
     }
 
-    private JettyHttpServerHandler(final BiConsumer<HttpRequest, HttpResponse> handler) {
+    private JettyHttpServerHandler(final HttpHandler handler) {
         super();
         this.handler = handler;
     }
@@ -65,11 +66,14 @@ final class JettyHttpServerHandler extends AbstractHandler {
     }
 
     private void handle(final HttpRequest request, final HttpResponse response) {
-        this.handler.accept(request, response);
+        this.handler.handle(
+                request,
+                response
+        );
         response.addEntity(HttpEntity.EMPTY);
     }
 
-    private final BiConsumer<HttpRequest, HttpResponse> handler;
+    private final HttpHandler handler;
 
     @Override
     public String toString() {

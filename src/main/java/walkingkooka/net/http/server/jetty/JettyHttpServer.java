@@ -27,6 +27,7 @@ import walkingkooka.net.header.HttpHeaderName;
 import walkingkooka.net.header.MediaType;
 import walkingkooka.net.http.HttpEntity;
 import walkingkooka.net.http.HttpStatusCode;
+import walkingkooka.net.http.server.HttpHandler;
 import walkingkooka.net.http.server.HttpRequest;
 import walkingkooka.net.http.server.HttpResponse;
 import walkingkooka.net.http.server.HttpServer;
@@ -44,7 +45,7 @@ public final class JettyHttpServer implements HttpServer {
 
     public static JettyHttpServer with(final HostAddress host,
                                        final IpPort port,
-                                       final BiConsumer<HttpRequest, HttpResponse> handler) {
+                                       final HttpHandler handler) {
         Objects.requireNonNull(host, "host");
         Objects.requireNonNull(port, "port");
         Objects.requireNonNull(handler, "handler");
@@ -54,7 +55,7 @@ public final class JettyHttpServer implements HttpServer {
 
     private JettyHttpServer(final HostAddress host,
                             final IpPort port,
-                            final BiConsumer<HttpRequest, HttpResponse> handler) {
+                            final HttpHandler handler) {
         final Server server = new Server(new InetSocketAddress(host.value(), port.value()));
         server.setHandler(JettyHttpServerHandler.with(handler));
         this.server = server;
