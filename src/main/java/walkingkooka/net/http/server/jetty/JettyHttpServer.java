@@ -36,6 +36,7 @@ import walkingkooka.net.http.server.HttpServerException;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 /**
@@ -140,7 +141,7 @@ public final class JettyHttpServer implements HttpServer {
 
             res.addEntity(HttpEntity.EMPTY
                     .addHeader(HttpHeaderName.SERVER, "JettyServer)")
-                    .addHeader(HttpHeaderName.CONTENT_TYPE, MediaType.TEXT_PLAIN.setCharset(CharsetName.UTF_8))
+                    .setContentType(MediaType.TEXT_PLAIN.setCharset(CharsetName.UTF_8))
                     .setBodyText(b.toString())
                     .setContentLength());
 
