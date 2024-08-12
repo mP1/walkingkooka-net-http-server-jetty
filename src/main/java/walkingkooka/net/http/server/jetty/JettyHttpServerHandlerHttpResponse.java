@@ -42,6 +42,7 @@ final class JettyHttpServerHandlerHttpResponse implements HttpResponse {
 
     private JettyHttpServerHandlerHttpResponse() {
         super();
+        this.entity = HttpEntity.EMPTY;
     }
 
     @Override
@@ -71,39 +72,34 @@ final class JettyHttpServerHandlerHttpResponse implements HttpResponse {
     private HttpStatus status;
 
     @Override
-    public void addEntity(final HttpEntity entity) {
+    public void setEntity(final HttpEntity entity) {
         Objects.requireNonNull(entity, "entity");
-        this.entities.add(entity);
+        this.entity = entity;
     }
 
     @Override
-    public List<HttpEntity> entities() {
-        return Lists.readOnly(this.entities);
+    public HttpEntity entity() {
+        return this.entity;
     }
 
-    private final List<HttpEntity> entities = Lists.array();
+    private HttpEntity entity;
 
     /**
      * Copies the status and entities to the given {@link HttpServletResponse}
      */
     void commit(final HttpServletResponse response) throws IOException, ServletException {
         final HttpStatus status = this.status;
-        if(null==status) {
+        if (null == status) {
             throw new ServletException("Request not handled");
         }
         response.setStatus(status.value().code(), status.message());
 
-        boolean first = true;
-        try(final ServletOutputStream output = response.getOutputStream()) {
-            for(HttpEntity entity : this.entities) {
-                if(first) {
-                    copyHeaders(entity, response);
-                    copyBody(entity, output);
-                    first = true;
-                } else {
+        try (final ServletOutputStream output = response.getOutputStream()) {
+            final HttpEntity entity = this.entity;
 
-                }
-            }
+            copyHeaders(entity, response);
+            copyBody(entity, output);
+
             output.flush();
         }
     }

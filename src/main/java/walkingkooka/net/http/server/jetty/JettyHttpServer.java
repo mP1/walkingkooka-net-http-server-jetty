@@ -139,11 +139,13 @@ public final class JettyHttpServer implements HttpServer {
                         b.append('\n');
                     });
 
-            res.addEntity(HttpEntity.EMPTY
+            res.setEntity(
+                    HttpEntity.EMPTY
                     .addHeader(HttpHeaderName.SERVER, "JettyServer)")
                     .setContentType(MediaType.TEXT_PLAIN.setCharset(CharsetName.UTF_8))
                     .setBodyText(b.toString())
-                    .setContentLength());
+                    .setContentLength()
+            );
 
         } else {
             res.setStatus(HttpStatusCode.NOT_FOUND.status());
