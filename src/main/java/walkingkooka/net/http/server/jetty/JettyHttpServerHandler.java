@@ -70,7 +70,6 @@ final class JettyHttpServerHandler extends AbstractHandler {
                 request,
                 response
         );
-        response.addEntity(HttpEntity.EMPTY);
     }
 
     private final HttpHandler handler;
