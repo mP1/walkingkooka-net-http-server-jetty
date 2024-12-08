@@ -18,7 +18,6 @@
 package walkingkooka.net.http.server.jetty;
 
 import walkingkooka.Cast;
-import walkingkooka.collect.list.Lists;
 import walkingkooka.net.header.HttpHeaderName;
 import walkingkooka.net.http.HttpEntity;
 import walkingkooka.net.http.HttpProtocolVersion;
