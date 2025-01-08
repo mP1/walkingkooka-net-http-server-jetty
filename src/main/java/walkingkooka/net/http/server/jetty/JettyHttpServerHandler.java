@@ -19,7 +19,6 @@ package walkingkooka.net.http.server.jetty;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import walkingkooka.net.http.HttpEntity;
 import walkingkooka.net.http.server.HttpHandler;
 import walkingkooka.net.http.server.HttpRequest;
 import walkingkooka.net.http.server.HttpRequests;
@@ -58,8 +57,8 @@ final class JettyHttpServerHandler extends AbstractHandler {
 
             final HttpRequest httpRequest = HttpRequests.httpServletRequest(httpServletRequest);
             this.handle(
-                    httpRequest,
-                    HttpResponses.headerScope(httpResponse)
+                httpRequest,
+                HttpResponses.headerScope(httpResponse)
             );
 
             httpResponse.commit(httpServletResponse);
@@ -68,8 +67,8 @@ final class JettyHttpServerHandler extends AbstractHandler {
 
     private void handle(final HttpRequest request, final HttpResponse response) {
         this.handler.handle(
-                request,
-                response
+            request,
+            response
         );
     }
 

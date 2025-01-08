@@ -36,8 +36,6 @@ import walkingkooka.net.http.server.HttpServerException;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.BiConsumer;
 
 /**
  * A {@link HttpServer} that uses an embedded JETTY servlet container.
@@ -96,8 +94,8 @@ public final class JettyHttpServer implements HttpServer {
         final IpPort port = IpPort.with(Integer.parseInt(args[1]));
 
         final JettyHttpServer server = JettyHttpServer.with(host,
-                port,
-                JettyHttpServer::handle);
+            port,
+            JettyHttpServer::handle);
 
         try {
             server.start();
@@ -118,29 +116,29 @@ public final class JettyHttpServer implements HttpServer {
             b.append("headers\n");
 
             req.headers()
-                    .forEach((header, value) -> {
-                        value.forEach((v) -> {
-                            b.append("  ");
-                            b.append(header);
-                            b.append(": ");
-                            b.append(header.headerText(Cast.to(v)));
-                            b.append('\n');
-                        });
+                .forEach((header, value) -> {
+                    value.forEach((v) -> {
+                        b.append("  ");
+                        b.append(header);
+                        b.append(": ");
+                        b.append(header.headerText(Cast.to(v)));
+                        b.append('\n');
                     });
+                });
 
             b.append("parameters\n");
 
             req.parameters()
-                    .forEach((key, value) -> {
-                        b.append("  ");
-                        b.append(key);
-                        b.append('=');
-                        b.append(String.join(", ", value));
-                        b.append('\n');
-                    });
+                .forEach((key, value) -> {
+                    b.append("  ");
+                    b.append(key);
+                    b.append('=');
+                    b.append(String.join(", ", value));
+                    b.append('\n');
+                });
 
             res.setEntity(
-                    HttpEntity.EMPTY
+                HttpEntity.EMPTY
                     .addHeader(HttpHeaderName.SERVER, "JettyServer)")
                     .setContentType(MediaType.TEXT_PLAIN.setCharset(CharsetName.UTF_8))
                     .setBodyText(b.toString())
