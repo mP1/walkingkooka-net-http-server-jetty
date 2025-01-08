@@ -104,20 +104,20 @@ final class JettyHttpServerHandlerHttpResponse implements HttpResponse {
     }
 
     private static void copyHeaders(final HttpEntity entity, final HttpServletResponse response) {
-        for(final Entry<HttpHeaderName<?>, List<?>> headerAndValues : entity.headers().entrySet()) {
+        for (final Entry<HttpHeaderName<?>, List<?>> headerAndValues : entity.headers().entrySet()) {
             final HttpHeaderName<?> headerName = headerAndValues.getKey();
 
             final String headerNameString = headerName.value();
             final List<?> headerValues = headerAndValues.getValue();
 
-            for(final Object headerValue : headerValues) {
+            for (final Object headerValue : headerValues) {
                 response.addHeader(headerNameString,
-                        headerName.headerText(Cast.to(headerValue)));
+                    headerName.headerText(Cast.to(headerValue)));
             }
         }
     }
 
-    private static void copyBody(final HttpEntity entity, final ServletOutputStream output)throws IOException {
+    private static void copyBody(final HttpEntity entity, final ServletOutputStream output) throws IOException {
         output.write(entity.body().value());
     }
 }
