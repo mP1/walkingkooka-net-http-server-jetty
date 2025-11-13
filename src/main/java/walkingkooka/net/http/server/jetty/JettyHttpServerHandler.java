@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.function.BiConsumer;
 
 /**
- * Bridge that handles dispatching {@link HttpServletRequest} and {@link HttpServletResponse} to a {@link BiConsumer}.
+ * Bridge that handles dispatching {@link HttpServletRequest} and {@link HttpServletResponse} to a {@link HttpHandler}.
  */
 final class JettyHttpServerHandler extends AbstractHandler {
 
