@@ -92,13 +92,13 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.4.56.v20240826</version>
+            <version>9.4.57.v20241219</version>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>9.4.32.v20200930</version>
+            <version>9.4.57.v20241219</version>
         </dependency>
     </dependencies>
 
