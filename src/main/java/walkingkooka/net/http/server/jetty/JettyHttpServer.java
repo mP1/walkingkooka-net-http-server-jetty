@@ -27,7 +27,9 @@ import walkingkooka.net.header.HttpHeaderName;
 import walkingkooka.net.header.MediaType;
 import walkingkooka.net.http.HttpEntity;
 import walkingkooka.net.http.HttpStatusCode;
+import walkingkooka.net.http.server.FakeHttpHandlerContext;
 import walkingkooka.net.http.server.HttpHandler;
+import walkingkooka.net.http.server.HttpHandlerContext;
 import walkingkooka.net.http.server.HttpRequest;
 import walkingkooka.net.http.server.HttpResponse;
 import walkingkooka.net.http.server.HttpServer;
@@ -40,23 +42,36 @@ import java.util.Objects;
 /**
  * A {@link HttpServer} that uses an embedded JETTY servlet container.
  */
-public final class JettyHttpServer implements HttpServer {
+public final class JettyHttpServer<C extends HttpHandlerContext> implements HttpServer {
 
-    public static JettyHttpServer with(final HostAddress host,
-                                       final IpPort port,
-                                       final HttpHandler handler) {
+    public static <C extends HttpHandlerContext> JettyHttpServer<C> with(final HostAddress host,
+                                                                         final IpPort port,
+                                                                         final HttpHandler<C> handler,
+                                                                         final C context) {
         Objects.requireNonNull(host, "host");
         Objects.requireNonNull(port, "port");
         Objects.requireNonNull(handler, "handler");
+        Objects.requireNonNull(context, "context");
 
-        return new JettyHttpServer(host, port, handler);
+        return new JettyHttpServer<>(
+            host,
+            port,
+            handler,
+            context
+        );
     }
 
     private JettyHttpServer(final HostAddress host,
                             final IpPort port,
-                            final HttpHandler handler) {
+                            final HttpHandler<C> handler,
+                            final C context) {
         final Server server = new Server(new InetSocketAddress(host.value(), port.value()));
-        server.setHandler(JettyHttpServerHandler.with(handler));
+        server.setHandler(
+            JettyHttpServerHandler.with(
+                handler,
+                context
+            )
+        );
         this.server = server;
     }
 
@@ -93,9 +108,12 @@ public final class JettyHttpServer implements HttpServer {
         final HostAddress host = HostAddress.with(args[0]);
         final IpPort port = IpPort.with(Integer.parseInt(args[1]));
 
-        final JettyHttpServer server = JettyHttpServer.with(host,
+        final JettyHttpServer<FakeHttpHandlerContext> server = JettyHttpServer.with(
+            host,
             port,
-            JettyHttpServer::handle);
+            JettyHttpServer::handle,
+            new FakeHttpHandlerContext()
+        );
 
         try {
             server.start();
@@ -107,7 +125,9 @@ public final class JettyHttpServer implements HttpServer {
         }
     }
 
-    private static void handle(final HttpRequest req, final HttpResponse res) {
+    private static void handle(final HttpRequest req,
+                               final HttpResponse res,
+                               final FakeHttpHandlerContext context) {
         if (UrlPath.parse("/dump.txt").equals(req.url().path())) {
             res.setStatus(HttpStatusCode.OK.status());
 

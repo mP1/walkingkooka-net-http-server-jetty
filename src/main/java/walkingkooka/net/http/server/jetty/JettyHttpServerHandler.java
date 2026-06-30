@@ -20,6 +20,7 @@ package walkingkooka.net.http.server.jetty;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import walkingkooka.net.http.server.HttpHandler;
+import walkingkooka.net.http.server.HttpHandlerContext;
 import walkingkooka.net.http.server.HttpRequest;
 import walkingkooka.net.http.server.HttpRequests;
 import walkingkooka.net.http.server.HttpResponse;
@@ -34,15 +35,21 @@ import java.util.function.BiConsumer;
 /**
  * Bridge that handles dispatching {@link HttpServletRequest} and {@link HttpServletResponse} to a {@link HttpHandler}.
  */
-final class JettyHttpServerHandler extends AbstractHandler {
+final class JettyHttpServerHandler<C extends HttpHandlerContext> extends AbstractHandler {
 
-    static JettyHttpServerHandler with(final HttpHandler handler) {
-        return new JettyHttpServerHandler(handler);
+    static <C extends HttpHandlerContext> JettyHttpServerHandler<C> with(final HttpHandler<C> handler,
+                                                                         final C context) {
+        return new JettyHttpServerHandler<>(
+            handler,
+            context
+        );
     }
 
-    private JettyHttpServerHandler(final HttpHandler handler) {
+    private JettyHttpServerHandler(final HttpHandler<C> handler,
+                                   final C context) {
         super();
         this.handler = handler;
+        this.context = context;
     }
 
     @Override
@@ -65,14 +72,18 @@ final class JettyHttpServerHandler extends AbstractHandler {
         }
     }
 
-    private void handle(final HttpRequest request, final HttpResponse response) {
+    private void handle(final HttpRequest request,
+                        final HttpResponse response) {
         this.handler.handle(
             request,
-            response
+            response,
+            this.context
         );
     }
 
-    private final HttpHandler handler;
+    private final HttpHandler<C> handler;
+
+    private final C context;
 
     @Override
     public String toString() {
