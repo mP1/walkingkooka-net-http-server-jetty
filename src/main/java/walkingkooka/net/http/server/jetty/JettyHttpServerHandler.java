@@ -65,7 +65,7 @@ final class JettyHttpServerHandler<C extends HttpHandlerContext> extends Abstrac
             final HttpRequest httpRequest = HttpRequests.httpServletRequest(httpServletRequest);
             this.handle(
                 httpRequest,
-                HttpResponses.headerScope(httpResponse)
+                httpResponse
             );
 
             httpResponse.commit(httpServletResponse);
