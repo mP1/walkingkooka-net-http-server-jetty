@@ -19,6 +19,7 @@ package walkingkooka.net.http.server.jetty;
 
 import org.eclipse.jetty.server.Server;
 import walkingkooka.Cast;
+import walkingkooka.logging.LoggingContext;
 import walkingkooka.net.HostAddress;
 import walkingkooka.net.IpPort;
 import walkingkooka.net.UrlPath;
@@ -38,6 +39,7 @@ import walkingkooka.net.http.server.HttpServerException;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * A {@link HttpServer} that uses an embedded JETTY servlet container.
@@ -73,10 +75,23 @@ public final class JettyHttpServer<C extends HttpHandlerContext> implements Http
             )
         );
         this.server = server;
+        this.port = port;
+        this.context = context;
     }
 
     @Override
     public void start() {
+        this.logEnterAndExitHttpServer(
+            () -> {
+                this.context.info("Starting http server " + this.port);
+                this.start0();
+                this.context.info("Started http server " + this.port);
+                return null;
+            }
+        );
+    }
+
+    private void start0() {
         try {
             this.server.start();
         } catch (final Exception cause) {
@@ -84,8 +99,16 @@ public final class JettyHttpServer<C extends HttpHandlerContext> implements Http
         }
     }
 
+    private final IpPort port;
+
     @Override
     public void stop() {
+        this.context.info("Stopping http server");
+        this.stop0();
+        this.context.info("Stopped http server");
+    }
+
+    private void stop0() {
         try {
             this.server.stop();
         } catch (final Exception cause) {
@@ -94,6 +117,15 @@ public final class JettyHttpServer<C extends HttpHandlerContext> implements Http
     }
 
     private final Server server;
+
+    private <T> T logEnterAndExitHttpServer(final Supplier<T> supplier) {
+        return this.context.logEnterAndExit(
+            HTTP_SERVER_LOGGER,
+            supplier
+        );
+    }
+
+    private final LoggingContext context;
 
     @Override
     public String toString() {
